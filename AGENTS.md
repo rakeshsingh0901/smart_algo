@@ -8,7 +8,7 @@ This project is the foundation for an algorithmic trading bot. It provides a mod
 
 The initial version supports:
 -   ICICI Direct's Breeze API for brokerage services.
--   Technical analysis using the `talib` library.
+-   Technical analysis using the `talib` library. 
 
 ## 2. Directory Structure
 
