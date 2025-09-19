@@ -1,0 +1,30 @@
+# Python virtual environment
+env_algo/
+.venv/
+venv/
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+
+# IDE settings
+.vscode/
+.idea/
+
+# Environment variables
+.env
+
+# Logs
+*.log
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Local development settings
+*.sqlite3
