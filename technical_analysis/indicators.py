@@ -43,7 +43,6 @@ class Indicators:
 
         df['datetime'] = pd.to_datetime(df['datetime'])
         df.set_index('datetime', inplace=True)
-
         # Convert columns to numeric types
         for col in ['open', 'high', 'low', 'close', 'volume']:
             if col in df.columns:
@@ -51,10 +50,6 @@ class Indicators:
             else:
                 # If a required column is missing, we can't proceed.
                 return None
-
-
-        # Drop rows with any NaN values that might have been introduced
-        df.dropna(inplace=True)
 
         return df
 

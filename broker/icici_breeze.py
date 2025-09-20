@@ -52,7 +52,7 @@ class IciciBreeze:
             logging.error("Not connected to Breeze API. Call connect() first.")
             return None
         try:
-            historical_data = self.breeze.get_historical_data(
+            historical_data = self.breeze.get_historical_data_v2(
                 interval=interval,
                 from_date=from_date,
                 to_date=to_date,
@@ -98,7 +98,7 @@ class IciciBreeze:
             logging.error(f"Error getting LTP: {e}")
             return None
 
-    def start_websocket(self, on_ticks):
+    def start_websocket(self, on_ticks, stock_code="NIFTY", interval="1minute"):
         """
         Starts the WebSocket for real-time data.
 
@@ -109,8 +109,16 @@ class IciciBreeze:
             logging.error("Not connected to Breeze API. Call connect() first.")
             return
         try:
-            self.breeze.ws_connect()
             self.breeze.on_ticks = on_ticks
+            self.breeze.ws_connect()
+            data = self.breeze.subscribe_feeds(
+                exchange_code="NSE",
+                stock_code=stock_code,
+                product_type="index",
+                get_market_depth=False,
+                get_exchange_quotes=True,
+                interval=interval
+            )
             logging.info("WebSocket connected.")
         except Exception as e:
             logging.error(f"Error starting WebSocket: {e}")

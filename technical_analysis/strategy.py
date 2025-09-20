@@ -25,6 +25,11 @@ class Strategy:
         self.historical_data = None
         self.first_signal_candle = None
         self.second_signal_candle = None
+        self.short_tick_data = None
+    
+      # append short tick price every 1 second
+    def handle_short_ticks(self, ticks):
+        self.short_tick_data = ticks
 
     def update_data(self):
         """
@@ -87,8 +92,8 @@ class Strategy:
         latest_candle = self.indicators.data.iloc[-1]
 
         # Check for the first signal condition
-        if (latest_candle['low'] - buffer) > latest_ema and (latest_candle['low'] - latest_ema) > diff_threshold:
-            logging.info(f"First signal detected: low ({latest_candle['low']}) - buffer({buffer}) > EMA ({latest_ema}) and diff > {diff_threshold}")
+        if latest_candle['low'] > latest_ema and (latest_candle['low'] - latest_ema) > diff_threshold:
+            logging.info(f"First signal detected: low {latest_candle['low']} > EMA ({latest_ema}) and diff > {diff_threshold}")
             self.first_signal_candle = latest_candle
             return True
         else:
@@ -106,6 +111,7 @@ class Strategy:
         Returns:
             True if the second signal is found, False otherwise.
         """
+        breakpoint()
         if self.first_signal_candle is None:
             # No first signal, so no second signal
             return False
