@@ -59,7 +59,7 @@ def main():
         now_ist = datetime.now(ist)
 
         # Define market hours
-        market_open = now_ist.replace(hour=9, minute=15, second=0, microsecond=0)
+        market_open = now_ist.replace(hour=9, minute=20, second=0, microsecond=0)
         market_close = now_ist.replace(hour=15, minute=30, second=0, microsecond=0)
 
         # Check if it's within market hours and at the right time
