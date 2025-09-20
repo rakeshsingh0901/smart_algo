@@ -27,7 +27,7 @@ def main():
 
     # --- Stock Configuration ---
     # You can change these values to fetch data for a different stock
-    STOCK_CODE = "ITC"
+    STOCK_CODE = "NIFTY"
     EXCHANGE_CODE = "NSE"
     PRODUCT_TYPE = "cash"
     INTERVAL = "5minute"
