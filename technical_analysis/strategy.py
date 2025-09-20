@@ -150,7 +150,8 @@ class Strategy:
             return False
 
         # Get the current price of the stock
-        ltp = self.breeze.get_cash_ltp(stock_code=self.stock_code, exchange_code=self.exchange_code)
+        # ltp = self.breeze.get_cash_ltp(stock_code=self.stock_code, exchange_code=self.exchange_code)
+        ltp = self.short_tick_data
 
         if ltp is None:
             logging.error("Could not get the last traded price (LTP).")
