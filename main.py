@@ -1,6 +1,8 @@
 import os
 import logging
 import time
+from datetime import datetime
+import pytz
 from dotenv import load_dotenv
 from broker.icici_breeze import IciciBreeze
 from technical_analysis.strategy import Strategy
@@ -52,41 +54,48 @@ def main():
     while True:
         logging.info(f"--- Running Strategy Cycle (State: {state}) ---")
 
-        # Update historical data
-        if not strategy.update_data():
-            logging.error("Strategy cycle aborted due to data update failure.")
-            time.sleep(300)  # Wait for 5 minutes before retrying
-            continue
+        # Get the current time in IST
+        ist = pytz.timezone('Asia/Kolkata')
+        now_ist = datetime.now(ist)
 
-        if state == "waiting_for_first":
-            if strategy.check_first_signal():
-                first_signal_candle = strategy.first_signal_candle
-                state = "waiting_for_second"
-                logging.info(f"State changed to: {state}")
+        # Define market hours
+        market_open = now_ist.replace(hour=9, minute=15, second=0, microsecond=0)
+        market_close = now_ist.replace(hour=15, minute=30, second=0, microsecond=0)
 
-        elif state == "waiting_for_second":
-            # Pass the first signal candle to the check method
-            strategy.first_signal_candle = first_signal_candle
-            if strategy.check_second_signal():
-                second_signal_candle = strategy.second_signal_candle
-                state = "waiting_for_final"
-                logging.info(f"State changed to: {state}")
-            # Optional: Add logic to invalidate the first signal after some time
+        # Check if it's within market hours and at the right time
+        if market_open <= now_ist <= market_close:
+            if now_ist.minute % 5 == 0 and now_ist.second == 2:
+                logging.info("--- Market is open and it's time to check for signals ---")
 
-        elif state == "waiting_for_final":
-            # Pass the second signal candle to the check method
-            strategy.second_signal_candle = second_signal_candle
-            if strategy.check_final_signal():
-                logging.info("Final signal detected! Time to take action.")
-                # Reset the state machine
-                state = "waiting_for_first"
-                first_signal_candle = None
-                second_signal_candle = None
-                logging.info(f"State reset to: {state}")
-            # Optional: Add logic to invalidate the second signal after some time
+                # Update historical data
+                if not strategy.update_data():
+                    logging.error("Strategy cycle aborted due to data update failure.")
+                    continue
 
-        logging.info("Strategy cycle finished. Waiting for the next 5-minute interval...")
-        time.sleep(300)  # Wait for 5 minutes
+                if state == "waiting_for_first":
+                    if strategy.check_first_signal():
+                        first_signal_candle = strategy.first_signal_candle
+                        state = "waiting_for_second"
+                        logging.info(f"State changed to: {state}")
+
+                elif state == "waiting_for_second":
+                    strategy.first_signal_candle = first_signal_candle
+                    if strategy.check_second_signal():
+                        second_signal_candle = strategy.second_signal_candle
+                        state = "waiting_for_final"
+                        logging.info(f"State changed to: {state}")
+
+                elif state == "waiting_for_final":
+                    strategy.second_signal_candle = second_signal_candle
+                    if strategy.check_final_signal():
+                        logging.info("Final signal detected! Time to take action.")
+                        state = "waiting_for_first"
+                        first_signal_candle = None
+                        second_signal_candle = None
+                        logging.info(f"State reset to: {state}")
+
+        # Run the loop every second
+        time.sleep(1)
 
 if __name__ == "__main__":
     main()
