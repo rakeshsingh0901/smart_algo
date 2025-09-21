@@ -82,7 +82,21 @@ def main():
             if state == "waiting_for_final":
                 if strategy.check_final_signal():
                     logging.info(f"Take Entry =====================>")
+
+                    # --- Calculate Stop Loss and Target ---
+                    stop_loss = strategy.first_signal_candle['high'] + 3
+                    target = 2 * (strategy.first_signal_candle['high'] - strategy.second_signal_candle['low'])
+
+                    logging.info(f"Stop Loss: {stop_loss}")
+                    logging.info(f"Target: {target}")
+                    # --- End of Calculation ---
+
+                    # Reset state and candles for the next trade
                     state = "waiting_for_first"
+                    first_signal_candle = None
+                    second_signal_candle = None
+                    strategy.first_signal_candle = None
+                    strategy.second_signal_candle = None
         time.sleep(1)  # Wait for 1 second
 
 if __name__ == "__main__":

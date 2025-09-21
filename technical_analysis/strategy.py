@@ -111,7 +111,6 @@ class Strategy:
         Returns:
             True if the second signal is found, False otherwise.
         """
-        breakpoint()
         if self.first_signal_candle is None:
             # No first signal, so no second signal
             return False
