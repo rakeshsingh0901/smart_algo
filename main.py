@@ -56,7 +56,7 @@ def main():
         
         # Define market hours
         market_open = now_ist.replace(hour=9, minute=20, second=0, microsecond=0)
-        market_close = now_ist.replace(hour=15, minute=30, second=0, microsecond=0)
+        market_close = now_ist.replace(hour=15, minute=31, second=0, microsecond=0)
 
         # Check if it's within market hours and at the right time
         if market_open < now_ist < market_close:
@@ -83,7 +83,6 @@ def main():
                 if strategy.check_final_signal():
                     logging.info(f"Take Entry =====================>")
                     state = "waiting_for_first"
-
         time.sleep(1)  # Wait for 1 second
 
 if __name__ == "__main__":
