@@ -57,11 +57,11 @@ def main():
         # Define market hours
         market_open = now_ist.replace(hour=9, minute=20, second=0, microsecond=0)
         market_close = now_ist.replace(hour=15, minute=31, second=0, microsecond=0)
-
+        
         # Check if it's within market hours and at the right time
         if market_open < now_ist < market_close:
             if now_ist.minute % 5 == 0 and now_ist.second == 1:
-                logging.info("--- Market is open and it's time to check for signals ---")
+                logging.info("--- Market is open and it's time to check for signals every 5 minute ---")
 
                 # Update historical data
                 if not strategy.update_data():
@@ -82,7 +82,20 @@ def main():
             if state == "waiting_for_final":
                 if strategy.check_final_signal():
                     logging.info(f"Take Entry =====================>")
+                    # --- Calculate Stop Loss and Target ---
+                    stop_loss = strategy.first_signal_candle['high'] + 3
+                    target = 2 * (strategy.first_signal_candle['high'] - strategy.second_signal_candle['low'])
+                    
+                    logging.info(f"Stop Loss: {stop_loss}")
+                    logging.info(f"Target: {target}")
+                    # --- End of Calculation ---
+
+                    # Reset state and candles for the next trade
                     state = "waiting_for_first"
+                    first_signal_candle = None
+                    second_signal_candle = None
+                    strategy.first_signal_candle = None
+                    strategy.second_signal_candle = None
         time.sleep(1)  # Wait for 1 second
 
 if __name__ == "__main__":

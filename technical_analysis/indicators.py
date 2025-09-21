@@ -61,6 +61,9 @@ class Indicators:
             historical_data: A list of historical data points from the broker.
         """
         self.data = self._sanitize_data(historical_data)
+        #  If data is valid, calculate RSI and add it as a column
+        if self.data is not None:
+            self.data['rsi'] = self.rsi(period=14)
 
     def ema(self, period=14):
         """
